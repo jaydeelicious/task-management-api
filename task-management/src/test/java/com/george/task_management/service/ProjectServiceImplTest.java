@@ -1,6 +1,6 @@
 package com.george.task_management.service;
 
-import com.george.task_management.dto.ProjectCreateRequest;
+import com.george.task_management.dto.ProjectRequest;
 import com.george.task_management.dto.ProjectResponse;
 import com.george.task_management.entity.Project;
 import com.george.task_management.exception.ProjectNotFoundException;
@@ -67,7 +67,7 @@ class ProjectServiceImplTest {
 
     @Test
     void shouldCreateProject() {
-        ProjectCreateRequest request = new ProjectCreateRequest(
+        ProjectRequest request = new ProjectRequest(
                 "Task Management App",
                 "A Jira-style application"
         );
