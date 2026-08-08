@@ -192,4 +192,25 @@ public class Task {
     }
 
     //endregion
+
+    //region helpers
+
+    public void moveToProject(Project newProject) {
+        if (newProject == null) {
+            throw new IllegalArgumentException(("New project cannot be null"));
+        }
+
+        if (this.project == newProject) {
+            return;
+        }
+
+        if (this.project != null) {
+            this.project.removeTaskReference(this);
+        }
+
+        this.project = newProject;
+        newProject.addTaskReference(this);
+    }
+
+    //endregion
 }

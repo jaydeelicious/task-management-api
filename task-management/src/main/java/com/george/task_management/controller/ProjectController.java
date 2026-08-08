@@ -1,8 +1,7 @@
 package com.george.task_management.controller;
 
-import com.george.task_management.dto.ProjectCreateRequest;
+import com.george.task_management.dto.ProjectRequest;
 import com.george.task_management.dto.ProjectResponse;
-import com.george.task_management.dto.ProjectUpdateRequest;
 import com.george.task_management.service.ProjectService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +22,7 @@ public class ProjectController {
 
     @PostMapping
     public ResponseEntity<ProjectResponse> createProject(
-            @Valid @RequestBody ProjectCreateRequest request
+            @Valid @RequestBody ProjectRequest request
     ) {
         ProjectResponse createdProject = projectService.create(request);
 
@@ -53,7 +52,7 @@ public class ProjectController {
     @PutMapping("/{projectId}")
     public ResponseEntity<ProjectResponse> updateProject(
             @PathVariable Long projectId,
-            @Valid @RequestBody ProjectUpdateRequest request
+            @Valid @RequestBody ProjectRequest request
     ) {
         ProjectResponse updatedProject =
                 projectService.update(projectId, request);

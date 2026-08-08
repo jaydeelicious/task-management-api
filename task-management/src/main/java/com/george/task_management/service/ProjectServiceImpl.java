@@ -1,8 +1,7 @@
 package com.george.task_management.service;
 
-import com.george.task_management.dto.ProjectCreateRequest;
+import com.george.task_management.dto.ProjectRequest;
 import com.george.task_management.dto.ProjectResponse;
-import com.george.task_management.dto.ProjectUpdateRequest;
 import com.george.task_management.entity.Project;
 import com.george.task_management.exception.ProjectNotFoundException;
 import com.george.task_management.repository.ProjectRepository;
@@ -22,7 +21,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectResponse create(ProjectCreateRequest request) {
+    public ProjectResponse create(ProjectRequest request) {
         Project project = new Project(
                 request.name(),
                 request.description()
@@ -51,7 +50,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectResponse update(Long id, ProjectUpdateRequest request) {
+    public ProjectResponse update(Long id, ProjectRequest request) {
         Project project = getProjectOrThrow(id);
 
         project.update(

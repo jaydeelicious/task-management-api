@@ -3,6 +3,8 @@ package com.george.task_management.entity;
 import jakarta.persistence.*;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "projects")
@@ -23,6 +25,13 @@ public class Project {
 
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
+
+    @OneToMany(
+            mappedBy = "project",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            orphanRemoval = false
+    )
+    private List<Task> tasks = new ArrayList<>();
 
     protected Project() {
         // Required by JPA
@@ -69,4 +78,16 @@ public class Project {
     public Instant getUpdatedAt() {
         return updatedAt;
     }
+
+    //region helpers
+
+    void addTaskReference(Task task) {
+        tasks.add(task);
+    }
+
+    void removeTaskReference(Task task) {
+        tasks.remove(task);
+    }
+
+    //endregion
 }
