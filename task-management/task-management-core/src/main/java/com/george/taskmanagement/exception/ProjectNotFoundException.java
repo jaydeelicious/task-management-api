@@ -1,4 +1,4 @@
-package com.george.task_management.exception;
+package com.george.taskmanagement.exception;
 
 public class ProjectNotFoundException extends RuntimeException {
 
