@@ -1,4 +1,4 @@
-package com.george.task_management.dto;
+package com.george.taskmanagement.dto;
 
 import java.time.Instant;
 

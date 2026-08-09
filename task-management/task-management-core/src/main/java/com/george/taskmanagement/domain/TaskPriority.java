@@ -1,4 +1,4 @@
-package com.george.task_management.entity;
+package com.george.taskmanagement.domain;
 
 public enum TaskPriority {
     LOW,

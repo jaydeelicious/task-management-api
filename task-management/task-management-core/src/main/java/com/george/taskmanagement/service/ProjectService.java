@@ -1,4 +1,5 @@
-package com.george.task_management.service;
+/*
+package com.george.taskmanagement.service;
 
 import com.george.task_management.dto.ProjectRequest;
 import com.george.task_management.dto.ProjectResponse;
@@ -7,7 +8,7 @@ import java.util.List;
 
 public interface ProjectService {
 
-    ProjectResponse create(ProjectRequest request);
+    ProjectResponse createProject(ProjectRequest request);
 
     List<ProjectResponse> findAll();
 
@@ -17,3 +18,4 @@ public interface ProjectService {
 
     void delete(Long id);
 }
+*/

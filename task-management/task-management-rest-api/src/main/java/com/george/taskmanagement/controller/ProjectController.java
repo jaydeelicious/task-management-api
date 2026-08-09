@@ -1,8 +1,9 @@
-package com.george.task_management.controller;
+/*
+package com.george.taskmanagement.controller;
 
-import com.george.task_management.dto.ProjectRequest;
-import com.george.task_management.dto.ProjectResponse;
-import com.george.task_management.service.ProjectService;
+import com.george.taskmanagement.dto.ProjectRequest;
+import com.george.taskmanagement.dto.ProjectResponse;
+import com.george.taskmanagement.service.ProjectService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -69,3 +70,4 @@ public class ProjectController {
         return ResponseEntity.noContent().build();
     }
 }
+*/

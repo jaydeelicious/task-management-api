@@ -1,4 +1,4 @@
-package com.george.task_management.dto;
+package com.george.taskmanagement.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
