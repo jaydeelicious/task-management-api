@@ -57,6 +57,7 @@ public class Task {
             String title,
             String description,
             TaskList list,
+            int position,
             TaskPriority priority,
             LocalDate dueDate,
             Instant createdAt,
@@ -67,6 +68,7 @@ public class Task {
         this.title = title;
         this.description = description;
         this.list = list;
+        this.position = position;
         this.priority = priority;
         this.dueDate = dueDate;
         this.createdAt = createdAt;
