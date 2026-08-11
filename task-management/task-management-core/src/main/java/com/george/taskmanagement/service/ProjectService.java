@@ -1,21 +1,18 @@
-/*
 package com.george.taskmanagement.service;
 
-import com.george.task_management.dto.ProjectRequest;
-import com.george.task_management.dto.ProjectResponse;
+import com.george.taskmanagement.domain.Project;
 
 import java.util.List;
 
 public interface ProjectService {
 
-    ProjectResponse createProject(ProjectRequest request);
+    Project create(String name, String description);
 
-    List<ProjectResponse> findAll();
+    List<Project> findAll();
 
-    ProjectResponse findById(Long id);
+    Project findById(Long id);
 
-    ProjectResponse update(Long id, ProjectRequest request);
+    Project update(Long id, String name, String description);
 
     void delete(Long id);
 }
-*/
