@@ -4,6 +4,7 @@ package com.george.taskmanagement.service;
 import com.george.taskmanagement.domain.Comment;
 import com.george.taskmanagement.domain.Task;
 import com.george.taskmanagement.domain.User;
+import com.george.taskmanagement.exception.InvalidOperationException;
 import com.george.taskmanagement.exception.ResourceNotFoundException;
 import com.george.taskmanagement.repository.CommentRepository;
 import com.george.taskmanagement.repository.ProjectMemberRepository;
@@ -49,7 +50,7 @@ public class CommentServiceImpl implements CommentService {
 
         if (!projectMemberRepository
                 .existsByProjectIdAndUserId(projectId, authorId)) {
-            throw new IllegalArgumentException(
+            throw new InvalidOperationException(
                     "Only project members can comment on tasks"
             );
         }

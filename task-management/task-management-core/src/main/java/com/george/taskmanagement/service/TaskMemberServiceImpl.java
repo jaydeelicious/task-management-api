@@ -4,6 +4,7 @@ import com.george.taskmanagement.domain.Task;
 import com.george.taskmanagement.domain.TaskMember;
 import com.george.taskmanagement.domain.User;
 import com.george.taskmanagement.exception.DuplicateResourceException;
+import com.george.taskmanagement.exception.InvalidOperationException;
 import com.george.taskmanagement.exception.ResourceNotFoundException;
 import com.george.taskmanagement.repository.ProjectMemberRepository;
 import com.george.taskmanagement.repository.TaskMemberRepository;
@@ -46,7 +47,7 @@ public class TaskMemberServiceImpl implements TaskMemberService {
 
         if (!projectMemberRepository
                 .existsByProjectIdAndUserId(projectId, userId)) {
-            throw new IllegalArgumentException(
+            throw new InvalidOperationException(
                     "User must belong to the project before being added to a task"
             );
         }
