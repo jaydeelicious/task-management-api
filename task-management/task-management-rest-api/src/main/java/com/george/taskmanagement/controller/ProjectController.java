@@ -49,23 +49,11 @@ public class ProjectController {
         return ResponseEntity.ok(projects);
     }
 
-    private ProjectResponse toResponse(Project project) {
-        return new ProjectResponse(
-                project.getId(),
-                project.getName(),
-                project.getDescription(),
-                project.getCreatedAt(),
-                project.getUpdatedAt()
-        );
-    }
-
     @GetMapping("/{projectId}")
-    public ResponseEntity<ProjectResponse> getProject(
-            @PathVariable Long projectId
-    ) {
-        ProjectResponse project = projectService.findById(projectId);
+    public ResponseEntity<ProjectResponse> getProject(@PathVariable Long projectId) {
+        Project project = projectService.findById(projectId);
 
-        return ResponseEntity.ok(project);
+        return ResponseEntity.ok(toResponse(project));
     }
 
     @PutMapping("/{projectId}")
@@ -73,10 +61,13 @@ public class ProjectController {
             @PathVariable Long projectId,
             @Valid @RequestBody ProjectRequest request
     ) {
-        ProjectResponse updatedProject =
-                projectService.update(projectId, request);
+        Project updatedProject = projectService.update(
+                projectId,
+                request.name(),
+                request.description()
+        );
 
-        return ResponseEntity.ok(updatedProject);
+        return ResponseEntity.ok(toResponse(updatedProject));
     }
 
     @DeleteMapping("/{projectId}")
@@ -86,5 +77,15 @@ public class ProjectController {
         projectService.delete(projectId);
 
         return ResponseEntity.noContent().build();
+    }
+
+    private ProjectResponse toResponse(Project project) {
+        return new ProjectResponse(
+                project.getId(),
+                project.getName(),
+                project.getDescription(),
+                project.getCreatedAt(),
+                project.getUpdatedAt()
+        );
     }
 }
