@@ -35,5 +35,9 @@ public interface TaskService {
             int position
     );
 
+    Task addLabel(Long taskId, Long labelId);
+
+    Task removeLabel(Long taskId, Long labelId);
+
     void delete(Long id);
 }

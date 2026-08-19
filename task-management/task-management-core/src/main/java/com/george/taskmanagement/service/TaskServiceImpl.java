@@ -1,9 +1,12 @@
 package com.george.taskmanagement.service;
 
+import com.george.taskmanagement.domain.Label;
 import com.george.taskmanagement.domain.Task;
 import com.george.taskmanagement.domain.TaskList;
 import com.george.taskmanagement.domain.TaskPriority;
+import com.george.taskmanagement.exception.InvalidOperationException;
 import com.george.taskmanagement.exception.ResourceNotFoundException;
+import com.george.taskmanagement.repository.LabelRepository;
 import com.george.taskmanagement.repository.TaskListRepository;
 import com.george.taskmanagement.repository.TaskRepository;
 import org.springframework.stereotype.Service;
@@ -18,13 +21,16 @@ public class TaskServiceImpl implements TaskService {
 
     private final TaskRepository taskRepository;
     private final TaskListRepository taskListRepository;
+    private final LabelRepository labelRepository;
 
     public TaskServiceImpl(
             TaskRepository taskRepository,
-            TaskListRepository taskListRepository
+            TaskListRepository taskListRepository,
+            LabelRepository labelRepository
     ) {
         this.taskRepository = taskRepository;
         this.taskListRepository = taskListRepository;
+        this.labelRepository = labelRepository;
     }
 
     @Override
@@ -117,6 +123,58 @@ public class TaskServiceImpl implements TaskService {
 
         task.moveToList(list);
         task.moveToPosition(position);
+
+        return taskRepository.save(task);
+    }
+
+    @Override
+    public Task addLabel(Long taskId, Long labelId) {
+        Task task = getTaskOrThrow(taskId);
+
+        Label label = labelRepository
+                .findById(labelId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Label not found with id: " + labelId
+                        )
+                );
+
+        Long taskProjectId = task.getList().getProject().getId();
+        Long labelProjectId = label.getProject().getId();
+
+        if (!taskProjectId.equals(labelProjectId)) {
+            throw new InvalidOperationException(
+                    "Cannot add a label from a different project"
+            );
+        }
+
+        task.addLabel(label);
+
+        return taskRepository.save(task);
+    }
+
+    @Override
+    public Task removeLabel(Long taskId, Long labelId) {
+        Task task = getTaskOrThrow(taskId);
+
+        Label label = labelRepository
+                .findById(labelId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Label not found with id: " + labelId
+                        )
+                );
+
+        Long taskProjectId = task.getList().getProject().getId();
+        Long labelProjectId = label.getProject().getId();
+
+        if (!taskProjectId.equals(labelProjectId)) {
+            throw new InvalidOperationException(
+                    "Cannot remove a label from a different project"
+            );
+        }
+
+        task.removeLabel(label);
 
         return taskRepository.save(task);
     }
