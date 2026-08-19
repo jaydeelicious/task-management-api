@@ -1,6 +1,6 @@
-/*
 package com.george.taskmanagement.controller;
 
+import com.george.taskmanagement.domain.Project;
 import com.george.taskmanagement.dto.ProjectRequest;
 import com.george.taskmanagement.dto.ProjectResponse;
 import com.george.taskmanagement.service.ProjectService;
@@ -25,20 +25,38 @@ public class ProjectController {
     public ResponseEntity<ProjectResponse> createProject(
             @Valid @RequestBody ProjectRequest request
     ) {
-        ProjectResponse createdProject = projectService.create(request);
+        Project createdProject = projectService.create(
+                request.name(),
+                request.description()
+        );
 
-        URI location = URI.create("/api/projects/" + createdProject.id());
+        ProjectResponse response = toResponse(createdProject);
+
+        URI location = URI.create("/api/projects/" + response.id());
 
         return ResponseEntity
                 .created(location)
-                .body(createdProject);
+                .body(response);
     }
 
     @GetMapping
     public ResponseEntity<List<ProjectResponse>> getProjects() {
-        List<ProjectResponse> projects = projectService.findAll();
+        List<ProjectResponse> projects = projectService.findAll()
+                .stream()
+                .map(this::toResponse)
+                .toList();
 
         return ResponseEntity.ok(projects);
+    }
+
+    private ProjectResponse toResponse(Project project) {
+        return new ProjectResponse(
+                project.getId(),
+                project.getName(),
+                project.getDescription(),
+                project.getCreatedAt(),
+                project.getUpdatedAt()
+        );
     }
 
     @GetMapping("/{projectId}")
@@ -70,4 +88,3 @@ public class ProjectController {
         return ResponseEntity.noContent().build();
     }
 }
-*/
