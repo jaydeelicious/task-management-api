@@ -44,8 +44,11 @@ public class TaskListServiceImpl implements TaskListService {
 
     @Override
     @Transactional(readOnly = true)
-    public TaskList findById(Long id) {
-        return getTaskListOrThrow(id);
+    public TaskList findById(
+            Long projectId,
+            Long taskListId
+    ) {
+        return getTaskListOrThrow(projectId, taskListId);
     }
 
     @Override
@@ -59,10 +62,14 @@ public class TaskListServiceImpl implements TaskListService {
 
     @Override
     public TaskList rename(
-            Long id,
+            Long projectId,
+            Long taskListId,
             String name
     ) {
-        TaskList taskList = getTaskListOrThrow(id);
+        TaskList taskList = getTaskListOrThrow(
+                projectId,
+                taskListId
+        );
 
         taskList.rename(name);
 
@@ -71,10 +78,14 @@ public class TaskListServiceImpl implements TaskListService {
 
     @Override
     public TaskList move(
-            Long id,
+            Long projectId,
+            Long taskListId,
             int position
     ) {
-        TaskList taskList = getTaskListOrThrow(id);
+        TaskList taskList = getTaskListOrThrow(
+                projectId,
+                taskListId
+        );
 
         taskList.moveToPosition(position);
 
@@ -82,20 +93,37 @@ public class TaskListServiceImpl implements TaskListService {
     }
 
     @Override
-    public void delete(Long id) {
-        getTaskListOrThrow(id);
+    public void delete(
+            Long projectId,
+            Long taskListId
+    ) {
+        getTaskListOrThrow(projectId, taskListId);
 
-        taskListRepository.deleteById(id);
+        taskListRepository.deleteById(taskListId);
     }
 
-    private TaskList getTaskListOrThrow(Long id) {
-        return taskListRepository
-                .findById(id)
+    private TaskList getTaskListOrThrow(
+            Long projectId,
+            Long taskListId
+    ) {
+        TaskList taskList = taskListRepository
+                .findById(taskListId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
-                                "Task list not found with id: " + id
+                                "Task list not found with id: " + taskListId
                         )
                 );
+
+        if (!taskList.getProject().getId().equals(projectId)) {
+            throw new ResourceNotFoundException(
+                    "Task list not found with id: " +
+                            taskListId +
+                            " in project: " +
+                            projectId
+            );
+        }
+
+        return taskList;
     }
 
     private Project getProjectOrThrow(Long id) {

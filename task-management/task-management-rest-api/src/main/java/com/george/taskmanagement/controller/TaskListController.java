@@ -66,7 +66,7 @@ public class TaskListController {
             @PathVariable Long projectId,
             @PathVariable Long listId
     ) {
-        TaskList taskList = taskListService.findById(listId);
+        TaskList taskList = taskListService.findById(projectId, listId);
 
         return ResponseEntity.ok(toResponse(taskList));
     }
@@ -78,6 +78,7 @@ public class TaskListController {
             @Valid @RequestBody RenameTaskListRequest request
     ) {
         TaskList taskList = taskListService.rename(
+                projectId,
                 listId,
                 request.name()
         );
@@ -92,6 +93,7 @@ public class TaskListController {
             @Valid @RequestBody MoveTaskListRequest request
     ) {
         TaskList taskList = taskListService.move(
+                projectId,
                 listId,
                 request.position()
         );
@@ -104,7 +106,7 @@ public class TaskListController {
             @PathVariable Long projectId,
             @PathVariable Long listId
     ) {
-        taskListService.delete(listId);
+        taskListService.delete(projectId, listId);
 
         return ResponseEntity.noContent().build();
     }

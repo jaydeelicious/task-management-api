@@ -7,24 +7,32 @@ import java.util.List;
 
 public interface TaskListService {
 
-    TaskList create(Long id,
+    TaskList create(Long projectId,
                     String name,
                     int position
     );
 
-    TaskList findById(Long id);
+    TaskList findById(
+            Long projectId,
+            Long taskListId
+    );
 
     List<TaskList> findByProjectId(Long projectId);
 
     TaskList rename(
-            Long id,
+            Long projectId,
+            Long taskListId,
             String name
     );
 
     TaskList move(
-            Long id,
+            Long projectId,
+            Long taskListId,
             int position
     );
 
-    void delete(Long id);
+    void delete(
+            Long projectId,
+            Long taskListId
+    );
 }
