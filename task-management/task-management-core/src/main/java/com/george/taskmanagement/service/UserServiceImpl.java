@@ -1,6 +1,7 @@
 package com.george.taskmanagement.service;
 
 import com.george.taskmanagement.domain.User;
+import com.george.taskmanagement.exception.DuplicateResourceException;
 import com.george.taskmanagement.exception.ResourceNotFoundException;
 import com.george.taskmanagement.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -19,10 +20,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public User create(String username, String email) {
-        return userRepository.save(
-                new User(username, email)
+        if (userRepository.existsByUsernameIgnoreCase(username)) {
+            throw new DuplicateResourceException(
+                    "User with username '" + username + "' already exists"
+            );
+        }
+
+        if (userRepository.existsByEmailIgnoreCase(email)) {
+            throw new DuplicateResourceException(
+                    "User with email '" + email + "' already exists"
+            );
+        }
+
+        User user = new User(
+                username,
+                email
         );
+
+        return userRepository.save(user);
     }
 
     @Override
@@ -43,6 +60,13 @@ public class UserServiceImpl implements UserService {
     public User updateUsername(Long id, String username) {
         User user = getUserOrThrow(id);
 
+        if (!user.getUsername().equalsIgnoreCase(username)
+                && userRepository.existsByUsernameIgnoreCase(username)) {
+            throw new DuplicateResourceException(
+                    "User with username '" + username + "' already exists"
+            );
+        }
+
         user.updateUsername(username);
 
         return userRepository.save(user);
@@ -52,6 +76,13 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public User updateEmail(Long id, String email) {
         User user = getUserOrThrow(id);
+
+        if (!user.getEmail().equalsIgnoreCase(email)
+                && userRepository.existsByEmailIgnoreCase(email)) {
+            throw new DuplicateResourceException(
+                    "User with email '" + email + "' already exists"
+            );
+        }
 
         user.updateEmail(email);
 
