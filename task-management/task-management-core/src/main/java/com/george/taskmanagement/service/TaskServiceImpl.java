@@ -58,78 +58,164 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional(readOnly = true)
-    public Task findById(Long id) {
-        return getTaskOrThrow(id);
+    public Task findById(
+            Long projectId,
+            Long listId,
+            Long taskId
+    ) {
+        return getTaskOrThrow(projectId, listId, taskId);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Task> findByListId(Long listId) {
-        getTaskListOrThrow(listId);
+    public List<Task> findByListId(
+            Long projectId,
+            Long listId
+    ) {
+        TaskList taskList = taskListRepository.findById(listId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Task list not found with id: " + listId
+                        )
+                );
 
-        return taskRepository
-                .findByListIdOrderByPosition(listId);
+        if (!taskList.getProject().getId().equals(projectId)) {
+            throw new ResourceNotFoundException(
+                    "Task list not found with id: "
+                            + listId
+                            + " in project: "
+                            + projectId
+            );
+        }
+
+        return taskRepository.findByListIdOrderByPosition(listId);
     }
 
     @Override
-    public Task updateTitle(Long id, String title) {
-        Task task = getTaskOrThrow(id);
+    @Transactional
+    public Task updateTitle(
+            Long projectId,
+            Long listId,
+            Long taskId,
+            String title
+    ) {
+        Task task = getTaskOrThrow(
+                projectId,
+                listId,
+                taskId
+        );
+
         task.updateTitle(title);
 
         return taskRepository.save(task);
     }
 
     @Override
+    @Transactional
     public Task updateDescription(
-            Long id,
+            Long projectId,
+            Long listId,
+            Long taskId,
             String description
     ) {
-        Task task = getTaskOrThrow(id);
+        Task task = getTaskOrThrow(
+                projectId,
+                listId,
+                taskId
+        );
+
         task.updateDescription(description);
 
         return taskRepository.save(task);
     }
 
     @Override
+    @Transactional
     public Task updatePriority(
-            Long id,
+            Long projectId,
+            Long listId,
+            Long taskId,
             TaskPriority priority
     ) {
-        Task task = getTaskOrThrow(id);
+        Task task = getTaskOrThrow(
+                projectId,
+                listId,
+                taskId
+        );
+
         task.updatePriority(priority);
 
         return taskRepository.save(task);
     }
 
     @Override
+    @Transactional
     public Task updateDueDate(
-            Long id,
+            Long projectId,
+            Long listId,
+            Long taskId,
             LocalDate dueDate
     ) {
-        Task task = getTaskOrThrow(id);
+        Task task = getTaskOrThrow(
+                projectId,
+                listId,
+                taskId
+        );
+
         task.updateDueDate(dueDate);
 
         return taskRepository.save(task);
     }
 
     @Override
+    @Transactional
     public Task move(
-            Long id,
-            Long listId,
+            Long projectId,
+            Long sourceListId,
+            Long taskId,
+            Long targetListId,
             int position
     ) {
-        Task task = getTaskOrThrow(id);
-        TaskList list = getTaskListOrThrow(listId);
+        Task task = getTaskOrThrow(
+                projectId,
+                sourceListId,
+                taskId
+        );
 
-        task.moveToList(list);
-        task.moveToPosition(position);
+        TaskList targetList = taskListRepository.findById(targetListId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Task list not found with id: " + targetListId
+                        )
+                );
+
+        if (!targetList.getProject().getId().equals(projectId)) {
+            throw new ResourceNotFoundException(
+                    "Task list not found with id: "
+                            + targetListId
+                            + " in project: "
+                            + projectId
+            );
+        }
+
+        task.moveToList(targetList);
 
         return taskRepository.save(task);
     }
 
     @Override
-    public Task addLabel(Long taskId, Long labelId) {
-        Task task = getTaskOrThrow(taskId);
+    @Transactional
+    public Task addLabel(
+            Long projectId,
+            Long listId,
+            Long taskId,
+            Long labelId
+    ) {
+        Task task = getTaskOrThrow(
+                projectId,
+                listId,
+                taskId
+        );
 
         Label label = labelRepository
                 .findById(labelId)
@@ -139,12 +225,12 @@ public class TaskServiceImpl implements TaskService {
                         )
                 );
 
-        Long taskProjectId = task.getList().getProject().getId();
-        Long labelProjectId = label.getProject().getId();
-
-        if (!taskProjectId.equals(labelProjectId)) {
-            throw new InvalidOperationException(
-                    "Cannot add a label from a different project"
+        if (!label.getProject().getId().equals(projectId)) {
+            throw new ResourceNotFoundException(
+                    "Label not found with id: "
+                            + labelId
+                            + " in project: "
+                            + projectId
             );
         }
 
@@ -154,8 +240,18 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Task removeLabel(Long taskId, Long labelId) {
-        Task task = getTaskOrThrow(taskId);
+    @Transactional
+    public Task removeLabel(
+            Long projectId,
+            Long listId,
+            Long taskId,
+            Long labelId
+    ) {
+        Task task = getTaskOrThrow(
+                projectId,
+                listId,
+                taskId
+        );
 
         Label label = labelRepository
                 .findById(labelId)
@@ -165,12 +261,12 @@ public class TaskServiceImpl implements TaskService {
                         )
                 );
 
-        Long taskProjectId = task.getList().getProject().getId();
-        Long labelProjectId = label.getProject().getId();
-
-        if (!taskProjectId.equals(labelProjectId)) {
-            throw new InvalidOperationException(
-                    "Cannot remove a label from a different project"
+        if (!label.getProject().getId().equals(projectId)) {
+            throw new ResourceNotFoundException(
+                    "Label not found with id: "
+                            + labelId
+                            + " in project: "
+                            + projectId
             );
         }
 
@@ -180,19 +276,50 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void delete(Long id) {
-        getTaskOrThrow(id);
-        taskRepository.deleteById(id);
+    @Transactional
+    public void delete(
+            Long projectId,
+            Long listId,
+            Long taskId
+    ) {
+        getTaskOrThrow(
+                projectId,
+                listId,
+                taskId
+        );
+
+        taskRepository.deleteById(taskId);
     }
 
-    private Task getTaskOrThrow(Long id) {
-        return taskRepository
-                .findById(id)
+    private Task getTaskOrThrow(
+            Long projectId,
+            Long listId,
+            Long taskId
+    ) {
+        Task task = taskRepository
+                .findById(taskId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
-                                "Task not found with id: " + id
+                                "Task not found with id: " + taskId
                         )
                 );
+
+        Long actualListId = task.getList().getId();
+        Long actualProjectId = task.getList().getProject().getId();
+
+        if (!actualListId.equals(listId)
+                || !actualProjectId.equals(projectId)) {
+            throw new ResourceNotFoundException(
+                    "Task not found with id: " +
+                            taskId +
+                            " in list: " +
+                            listId +
+                            " and project: " +
+                            projectId
+            );
+        }
+
+        return task;
     }
 
     private TaskList getTaskListOrThrow(Long id) {

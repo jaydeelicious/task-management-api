@@ -17,27 +17,70 @@ public interface TaskService {
             LocalDate dueDate
     );
 
-    Task findById(Long id);
+    Task findById(
+            Long projectId,
+            Long listId,
+            Long taskId
+    );
 
-    List<Task> findByListId(Long listId);
+    List<Task> findByListId(
+            Long projectId,
+            Long listId
+    );
 
-    Task updateTitle(Long id, String title);
+    Task updateTitle(
+            Long projectId,
+            Long listId,
+            Long id,
+            String title
+    );
 
-    Task updateDescription(Long id, String description);
+    Task updateDescription(
+            Long projectId,
+            Long listId,
+            Long taskId,
+            String description
+    );
 
-    Task updatePriority(Long id, TaskPriority priority);
+    Task updatePriority(
+            Long projectId,
+            Long listId,
+            Long taskId,
+            TaskPriority priority
+    );
 
-    Task updateDueDate(Long id, LocalDate dueDate);
+    Task updateDueDate(
+            Long projectId,
+            Long listId,
+            Long taskId,
+            LocalDate dueDate
+    );
 
     Task move(
-            Long id,
-            Long listId,
+            Long projectId,
+            Long sourceListId,
+            Long taskId,
+            Long targetListId,
             int position
     );
 
-    Task addLabel(Long taskId, Long labelId);
+    Task addLabel(
+            Long projectId,
+            Long listId,
+            Long taskId,
+            Long labelId
+    );
 
-    Task removeLabel(Long taskId, Long labelId);
+    Task removeLabel(
+            Long projectId,
+            Long listId,
+            Long taskId,
+            Long labelId
+    );
 
-    void delete(Long id);
+    void delete(
+            Long projectId,
+            Long listId,
+            Long taskId
+    );
 }
