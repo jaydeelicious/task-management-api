@@ -35,6 +35,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Task create(
+            Long projectId,
             Long listId,
             String title,
             String description,
@@ -42,7 +43,16 @@ public class TaskServiceImpl implements TaskService {
             TaskPriority priority,
             LocalDate dueDate
     ) {
-        TaskList list = getTaskListOrThrow(listId);
+        TaskList taskList = getTaskListOrThrow(listId);
+
+        if (!taskList.getProject().getId().equals(projectId)) {
+            throw new ResourceNotFoundException(
+                    "Task list not found with id: "
+                    + listId
+                    + " in project: "
+                + projectId
+            );
+        }
 
         Task task = new Task(
                 title,

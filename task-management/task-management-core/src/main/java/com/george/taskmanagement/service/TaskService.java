@@ -9,6 +9,7 @@ import java.util.List;
 public interface TaskService {
 
     Task create(
+            Long projectId,
             Long listId,
             String title,
             String description,
