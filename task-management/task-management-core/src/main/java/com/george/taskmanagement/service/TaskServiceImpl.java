@@ -199,6 +199,7 @@ public class TaskServiceImpl implements TaskService {
         }
 
         task.moveToList(targetList);
+        task.moveToPosition(position);
 
         return taskRepository.save(task);
     }
